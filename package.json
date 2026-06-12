@@ -1,0 +1,17 @@
+{
+  "name": "gemini-codex-oauth",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test",
+    "check": "node --check src/server.js && node --check src/session.js && node --check src/session-manager.js && node --check src/providers/base.js && node --check src/providers/antigravity.js && node --check src/providers/gemini.js && node --check src/providers/openai-codex.js"
+  },
+  "dependencies": {
+    "node-pty": "1.1.0"
+  }
+}
