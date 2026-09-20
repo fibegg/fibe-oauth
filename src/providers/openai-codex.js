@@ -70,9 +70,7 @@ export class OpenaiCodexProvider extends BaseProvider {
         const credentials = await readFile(credsPath, 'utf8');
         session.pushEvent({ type: 'auth_success', credentials: { 'auth.json': credentials } });
         return;
-      } catch {
-        /* fall through to unauthenticated */
-      }
+      } catch {}
     }
     session.pushEvent({ type: 'auth_status', status: 'unauthenticated' });
   }

@@ -45,16 +45,12 @@ export class BaseProvider {
     if (this.ptyProcess) {
       try {
         this.ptyProcess.kill('SIGTERM');
-      } catch {
-        /* process already exited */
-      }
+      } catch {}
       const processRef = this.ptyProcess;
       const timer = setTimeout(() => {
         try {
           processRef.kill('SIGKILL');
-        } catch {
-          /* process already exited */
-        }
+        } catch {}
       }, 2_000);
       timer.unref?.();
       return;
@@ -68,9 +64,7 @@ export class BaseProvider {
     } catch {
       try {
         this.child.kill('SIGTERM');
-      } catch {
-        /* process already exited */
-      }
+      } catch {}
     }
   }
 
@@ -90,9 +84,7 @@ export class BaseProvider {
   async cleanup() {
     try {
       if (this.stdin && !this.stdin.destroyed) this.stdin.destroy();
-    } catch {
-      /* ignore */
-    }
+    } catch {}
     this.child = null;
     this.ptyProcess = null;
     this.stdin = null;
