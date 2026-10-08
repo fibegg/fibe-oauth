@@ -159,7 +159,7 @@ export class AntigravityProvider extends BaseProvider {
     if (exitCode === 132 || UNSUPPORTED_RUNTIME_PATTERN.test(output)) {
       session.pushEvent({
         type: 'error',
-        message: 'Antigravity CLI cannot run on this Marquee CPU. The current Linux ARM64 binary requires ARM LSE support.',
+        message: 'Antigravity CLI cannot run on this Host CPU. The current Linux ARM64 binary requires ARM LSE support.',
       });
       return;
     }
