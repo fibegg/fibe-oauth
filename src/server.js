@@ -12,7 +12,18 @@ const PROVIDERS = {
   'openai-codex': OpenaiCodexProvider,
 };
 
-export function createServer({ manager = new SessionManager(), token = process.env.AUTH_SERVICE_TOKEN || '' } = {}) {
+// AUTH_SERVICE_TOKEN is canonical. Retain the previously shipped example name
+// as a compatibility alias, but never silently select between different secrets.
+export function resolveAuthServiceToken(env = process.env) {
+  const canonical = env.AUTH_SERVICE_TOKEN || '';
+  const legacy = env.FIBE_AUTH_SERVICE_TOKEN || '';
+  if (canonical && legacy && canonical !== legacy) {
+    throw new Error('AUTH_SERVICE_TOKEN and FIBE_AUTH_SERVICE_TOKEN conflict');
+  }
+  return canonical || legacy;
+}
+
+export function createServer({ manager = new SessionManager(), token = resolveAuthServiceToken() } = {}) {
   const server = http.createServer(async (request, response) => {
     try {
       const url = new URL(request.url || '/', 'http://127.0.0.1');
@@ -99,7 +110,9 @@ function createWaitMs() {
 function authorized(request, token) {
   if (!token) return true;
   const header = String(request.headers.authorization || '');
-  const supplied = header.replace(/^Bearer\s+/i, '');
+  const match = header.match(/^Bearer\s+(.+)$/i);
+  if (!match) return false;
+  const supplied = match[1];
   const expectedBuffer = Buffer.from(token);
   const suppliedBuffer = Buffer.from(supplied);
   return suppliedBuffer.length === expectedBuffer.length && timingSafeEqual(suppliedBuffer, expectedBuffer);
